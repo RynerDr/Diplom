@@ -7,9 +7,9 @@
 package servlsrc;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.Context;
@@ -25,60 +25,38 @@ public class BaseHandler {
     private final String LOOKUP = "java:/comp/env";
     private DataSource ds;
     
-    public String BHand (String reqtypefile, int reqid){
+    public String BHand (String reqtypefile, int reqid) throws SQLException{
         String resultsearch = null;
-        ResultSet rs = null;
-         int indexreqbd = 0;
-         ArrayList<Integer> idreqbd = new ArrayList<>();
-         ArrayList<String> urlfilebd = new ArrayList<>();
-        
+         
+        //загрузка контеста в котором описывается база данных
          try {
                 Context con = (Context) new InitialContext().lookup(LOOKUP);
                 ds = (DataSource) con.lookup(RESOURCE);
              } catch (NamingException ex) {
                 System.err.println(ex);
              }
-         Connection con = null;
-                
+         //установка соединения
 
-        try {
-            con = ds.getConnection();
-      
-        } catch (SQLException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       
-            java.sql.Statement st = null;
-        try {
-            st = con.createStatement();
-        } catch (SQLException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            Connection  con = ds.getConnection();
             
-        try {
-            rs = st.executeQuery("SELECT id, urlfile FROM "+ reqtypefile);
-        } catch (SQLException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+            PreparedStatement st = con.prepareStatement("SELECT id, urlfile FROM "+ reqtypefile + " where id=?");
+            st.setInt(1, reqid);
+            
+        //SQL запрос к базе данных, чтобы получить весь список интересующей таблицы   
+            ResultSet rs = st.executeQuery();
+        
            try { 
             while (rs.next()) 
             {
-                // Напечатать значения в текущей строке.
-                
-                try {
-                    idreqbd.add(rs.getInt("id"));
-                    urlfilebd.add(rs.getString("urlfile"));
-                } catch (SQLException ex) {
-                    Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                // записываем ответ на запрос
+                    resultsearch=rs.getString("urlfile");
+                    //закрытие
+                    con.close();
+                    rs.close();
+                    st.close();
             }
            }catch(SQLException ex) {
             Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        for (int i=0; i<idreqbd.size();i++){
-            System.out.println(idreqbd.get(i) + urlfilebd.get(i));
-            if(idreqbd.get(i)==reqid)resultsearch=urlfilebd.get(i);
         }
         
         return resultsearch;

@@ -26,16 +26,19 @@ public class VAServlMain extends HttpServlet {
      
    @Override
       public void init (ServletConfig config) throws ServletException  
-      {  
+      {
+          //инициализация начальних настроек сервлета
       }  
       
       @Override
       public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+          //выполнение метода service и передачае ему параметров запроса и ответа
           service(req,resp);
       }
       
      @Override
       public void destroy() {
+      //деструктор
       }  
 
      
@@ -46,10 +49,14 @@ public class VAServlMain extends HttpServlet {
         String resultsearch = null;
         BaseHandler bh = new BaseHandler();
            req.setCharacterEncoding("Cp1251");
-            String id = req.getParameter("id");
+            //получение параметров запроса
+           String id = req.getParameter("id");
             String typefile = req.getParameter("typefile");
+            //передача параметров обработчику базы данных и присваивание результата в переменную resultsearch
             resultsearch=bh.BHand(typefile, Integer.parseInt(id));
+            //передача параметра "адреса файла" на страницу ответа
             req.setAttribute("urladdres", resultsearch);
+            //отправка страницы ответа
             if (typefile.equals("video")){
                  RequestDispatcher dispatcher = req.getRequestDispatcher(pageVideo);
                    
