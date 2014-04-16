@@ -8,6 +8,10 @@
         <servlet-name>VAOutServl</servlet-name>
         <servlet-class>servlsrc.VAOutServl</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>VideoProvider</servlet-name>
+        <servlet-class>VideoPriverPackage.VideoProvider</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VAServlMain</servlet-name>
         <url-pattern>/VAServlMain</url-pattern>
@@ -15,6 +19,10 @@
     <servlet-mapping>
         <servlet-name>VAOutServl</servlet-name>
         <url-pattern>/VAOutServl</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VideoProvider</servlet-name>
+        <url-pattern>/VideoProvider</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

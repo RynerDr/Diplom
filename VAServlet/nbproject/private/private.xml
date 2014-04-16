@@ -5,7 +5,9 @@
         <group>
             <file>file:/C:/Users/Ryner/Documents/NetBeansProjects/VAServlet/src/java/servlsrc/VAServlMain.java</file>
             <file>file:/C:/Users/Ryner/Documents/NetBeansProjects/VAServlet/web/VideoResponse.jsp</file>
+            <file>file:/C:/Users/Ryner/Documents/NetBeansProjects/VAServlet/src/java/servlsrc/VAOutServl.java</file>
             <file>file:/C:/Users/Ryner/Documents/NetBeansProjects/VAServlet/src/java/servlsrc/BaseHandler.java</file>
+            <file>file:/C:/Users/Ryner/Documents/NetBeansProjects/VAServlet/src/java/VideoPriverPackage/VideoProvider.java</file>
             <file>file:/C:/Users/Ryner/Documents/NetBeansProjects/VAServlet/web/AudioResponse.jsp</file>
         </group>
     </open-files>

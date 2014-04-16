@@ -6,6 +6,7 @@
 
 package servlsrc;
 
+import VideoPriverPackage.VideoProvider;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +39,7 @@ public class VAOutServl extends HttpServlet {
       public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
           //выполнение метода service и передачае ему параметров запроса и ответа
           service(req,resp);
+          
       }
       
      @Override
@@ -50,20 +52,20 @@ public class VAOutServl extends HttpServlet {
      public void service (ServletRequest req, ServletResponse resp) 
                            throws ServletException, IOException  
       { 
-          BaseHandler bh = new BaseHandler();
+          VideoProvider urlfile =new VideoProvider();
           File newDirs = null;
           int cur = 0;
           req.setCharacterEncoding("Cp1251");
             //получение параметров запроса
           String id = req.getParameter("id");
           String typefile = req.getParameter("typefile");
-          
-          
+
        try {
-           newDirs = new File(bh.BHand(typefile, Integer.parseInt(id)));
+           newDirs = new File(urlfile.Load(typefile, Integer.parseInt(id)));
        } catch (SQLException ex) {
            Logger.getLogger(VAOutServl.class.getName()).log(Level.SEVERE, null, ex);
        }
+        
           FileInputStream qwe = new FileInputStream(newDirs);
           BufferedInputStream bis = new BufferedInputStream(new FileInputStream(newDirs));
           OutputStream os = resp.getOutputStream();
