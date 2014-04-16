@@ -51,14 +51,16 @@ public class BaseHandler {
                 // записываем ответ на запрос
                     resultsearch=rs.getString("urlfile");
                     //закрытие
-                    con.close();
-                    rs.close();
-                    st.close();
+                    
             }
            }catch(SQLException ex) {
             Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        finally {
+            con.close();
+            rs.close();
+            st.close();
+        }
         return resultsearch;
     }
 }

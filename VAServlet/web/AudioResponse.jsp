@@ -6,7 +6,8 @@
 
 <%@page language="java" import="java.util.*" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<% String uadr = String.valueOf(request.getAttribute("urladdres")); %> 
+<% String streamid = String.valueOf(request.getAttribute("id")); %>
+<% String requrl = "http://localhost:8080/VAServlet/VAOutServl?id="+streamid+"&typefile=audio"; %> 
 <!DOCTYPE html>
 <html>
 	<meta charset="windows-1251">
@@ -18,7 +19,6 @@
     </head>
     <body>
         <div class="player" id="audioplayer" style="width:400px;height:50px"></div>
-        <p><script type="text/javascript">this.player = new Uppod({m:"audio",uid:"audioplayer",file:"<%=uadr %>"});</script></p>
-        <p><%= uadr%></p>
+        <p><script type="text/javascript">this.player = new Uppod({m:"audio",uid:"audioplayer",file:"<%=requrl %>"});</script></p>
     </body>
 </html>

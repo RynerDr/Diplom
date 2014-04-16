@@ -6,8 +6,14 @@
 
 package servlsrc;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -20,10 +26,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Ryner
  */
-public class VAServlMain extends HttpServlet {
-   String pageVideo = "VideoResponse.jsp";
-   String pageAudio = "AudioResponse.jsp";
-     
+public class VAOutServl extends HttpServlet {
+
    @Override
       public void init (ServletConfig config) throws ServletException  
       {
@@ -45,29 +49,27 @@ public class VAServlMain extends HttpServlet {
      @Override
      public void service (ServletRequest req, ServletResponse resp) 
                            throws ServletException, IOException  
-      {  
-
-           req.setCharacterEncoding("Cp1251");
+      { 
+          BaseHandler bh = new BaseHandler();
+          File newDirs = null;
+          int cur = 0;
+          req.setCharacterEncoding("Cp1251");
             //получение параметров запроса
-           String id = req.getParameter("id");
-            String typefile = req.getParameter("typefile");
-            //передача параметра "адреса файла" на страницу ответа
-            req.setAttribute("id", id);
-            req.setAttribute("typefile", typefile);
-            //отправка страницы ответа
-            if (typefile.equals("video")){
-                 RequestDispatcher dispatcher = req.getRequestDispatcher(pageVideo);
-                   
-                 if (dispatcher != null) {
-                        dispatcher.forward(req, resp);
-                     }
-            }
-            if (typefile.equals("audio")){
-                 RequestDispatcher dispatcher = req.getRequestDispatcher(pageAudio);
- 
-                    if (dispatcher != null) {
-                        dispatcher.forward(req, resp);
-                     }
-            }
-    }
+          String id = req.getParameter("id");
+          String typefile = req.getParameter("typefile");
+          
+          
+       try {
+           newDirs = new File(bh.BHand(typefile, Integer.parseInt(id)));
+       } catch (SQLException ex) {
+           Logger.getLogger(VAOutServl.class.getName()).log(Level.SEVERE, null, ex);
+       }
+          FileInputStream qwe = new FileInputStream(newDirs);
+          BufferedInputStream bis = new BufferedInputStream(new FileInputStream(newDirs));
+          OutputStream os = resp.getOutputStream();
+          while((cur=bis.read())!=-1 )os.write(cur);
+          os.close();
+          bis.close();
+      }
+
 }
