@@ -16,5 +16,5 @@ public interface VideoProvider {
    /*public String Load(String reqtypefile, int reqid){
        return null;
    }*/
-    void Load(OutputStream out,String reqtypefile, int reqid);
+    void load(OutputStream out,String reqtypefile, int reqid);
 }

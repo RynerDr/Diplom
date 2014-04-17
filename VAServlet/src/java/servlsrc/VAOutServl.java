@@ -7,6 +7,8 @@
 package servlsrc;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -20,11 +22,13 @@ import javax.servlet.http.HttpServletResponse;
  * @author Ryner
  */
 public class VAOutServl extends HttpServlet {
-
+    protected String paramInitClass = null;
    @Override
       public void init (ServletConfig config) throws ServletException  
       {
           //инициализация начальних настроек сервлета
+          this.paramInitClass = config.getInitParameter("videoProvider");
+
       }  
       
       @Override
@@ -44,13 +48,19 @@ public class VAOutServl extends HttpServlet {
      public void service (ServletRequest req, ServletResponse resp) 
                            throws ServletException, IOException  
       { 
-          BaseHandler urlfile = new BaseHandler();
+
+          VideoProvider provider = null;
+       try {
+           provider = (VideoProvider) Class.forName(this.paramInitClass).newInstance();
+       } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+           Logger.getLogger(VAOutServl.class.getName()).log(Level.SEVERE, null, ex);
+       }
           req.setCharacterEncoding("Cp1251");
+          
             //получение параметров запроса
           String id = req.getParameter("id");
           String typefile = req.getParameter("typefile");
-
-          urlfile.Load(resp.getOutputStream(), typefile,Integer.parseInt(id));
+          provider.load(resp.getOutputStream(), typefile,Integer.parseInt(id));
       }
 
 }

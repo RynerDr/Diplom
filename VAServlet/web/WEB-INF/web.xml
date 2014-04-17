@@ -7,8 +7,13 @@
     <servlet>
         <servlet-name>VAOutServl</servlet-name>
         <servlet-class>servlsrc.VAOutServl</servlet-class>
+        
+        <init-param>
+ 	  	<param-name>videoProvider</param-name>
+ 	  	<param-value>servlsrc.BaseHandler</param-value>
+  	</init-param>
     </servlet>
-
+        
     <servlet-mapping>
         <servlet-name>VAServlMain</servlet-name>
         <url-pattern>/VAServlMain</url-pattern>

@@ -34,9 +34,11 @@ public class BaseHandler implements VideoProvider{
     
 
     @Override
-    public void Load(OutputStream out,String reqtypefile, int reqid) {
+    public void load(OutputStream out,String reqtypefile, int reqid) {
         String resultsearch = null;
-         
+        PreparedStatement st = null;
+        ResultSet rs = null; 
+        
         //загрузка контеста в котором описывается база данных
          try {
                 Context con = (Context) new InitialContext().lookup(LOOKUP);
@@ -49,31 +51,12 @@ public class BaseHandler implements VideoProvider{
             Connection  con = null;
         try {
             con = ds.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
-            PreparedStatement st = null;
-        try {
             st = con.prepareStatement("SELECT id, urlfile FROM "+ reqtypefile + " where id=?");
-        } catch (SQLException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
             st.setInt(1, reqid);
-        } catch (SQLException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
+
         //SQL запрос к базе данных, чтобы получить весь список интересующей таблицы   
-            ResultSet rs = null;
-        try {
             rs = st.executeQuery();
-        } catch (SQLException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
-           try { 
             while (rs.next()) 
             {
                 // записываем ответ на запрос
@@ -81,21 +64,21 @@ public class BaseHandler implements VideoProvider{
                     //закрытие
                     
             }
-           }catch(SQLException ex) {
+            } catch (SQLException ex) {
             Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         finally {
             try {
-            con.close();
-            rs.close();
-            st.close();
+                con.close();
+                rs.close();
+                st.close();
             } catch (SQLException ex) {
                 Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-   //     return resultsearch;
-           File newDirs = null;
-           int cur = 0;
+
+           File newDirs ;
+           int cur;
            newDirs = new File(resultsearch);
            FileInputStream qwe;
            BufferedInputStream bis = null; 
@@ -103,17 +86,15 @@ public class BaseHandler implements VideoProvider{
         try {
             qwe = new FileInputStream(newDirs);
             bis = new BufferedInputStream(new FileInputStream(newDirs));
-            } catch (FileNotFoundException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-          
-        try {
+            
             while((cur=bis.read())!=-1 )out.write(cur);
-        } catch (IOException ex) {
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
             Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         finally{
-            
             try {
                 out.close();
                 bis.close();
