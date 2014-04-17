@@ -6,15 +6,11 @@
 
 package servlsrc;
 
-import VideoPriverPackage.VideoProvider;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -52,7 +48,7 @@ public class VAOutServl extends HttpServlet {
      public void service (ServletRequest req, ServletResponse resp) 
                            throws ServletException, IOException  
       { 
-          VideoProvider urlfile =new VideoProvider();
+          BaseHandler urlfile = new BaseHandler();
           File newDirs = null;
           int cur = 0;
           req.setCharacterEncoding("Cp1251");
@@ -60,11 +56,9 @@ public class VAOutServl extends HttpServlet {
           String id = req.getParameter("id");
           String typefile = req.getParameter("typefile");
 
-       try {
+       
            newDirs = new File(urlfile.Load(typefile, Integer.parseInt(id)));
-       } catch (SQLException ex) {
-           Logger.getLogger(VAOutServl.class.getName()).log(Level.SEVERE, null, ex);
-       }
+       
         
           FileInputStream qwe = new FileInputStream(newDirs);
           BufferedInputStream bis = new BufferedInputStream(new FileInputStream(newDirs));

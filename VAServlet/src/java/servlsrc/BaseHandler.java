@@ -20,12 +20,15 @@ import javax.sql.DataSource;
  *
  * @author Ryner
  */
-public class BaseHandler {
+public class BaseHandler implements VideoProvider{
     private final String RESOURCE = "jdbc/VAServlet";
     private final String LOOKUP = "java:/comp/env";
     private DataSource ds;
     
-    public String BHand (String reqtypefile, int reqid) throws SQLException{
+    
+
+    @Override
+    public String Load(String reqtypefile, int reqid) {
         String resultsearch = null;
          
         //загрузка контеста в котором описывается база данных
@@ -37,13 +40,32 @@ public class BaseHandler {
              }
          //установка соединения
 
-            Connection  con = ds.getConnection();
+            Connection  con = null;
+        try {
+            con = ds.getConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
             
-            PreparedStatement st = con.prepareStatement("SELECT id, urlfile FROM "+ reqtypefile + " where id=?");
+            PreparedStatement st = null;
+        try {
+            st = con.prepareStatement("SELECT id, urlfile FROM "+ reqtypefile + " where id=?");
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
             st.setInt(1, reqid);
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
             
         //SQL запрос к базе данных, чтобы получить весь список интересующей таблицы   
-            ResultSet rs = st.executeQuery();
+            ResultSet rs = null;
+        try {
+            rs = st.executeQuery();
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
            try { 
             while (rs.next()) 
@@ -57,10 +79,19 @@ public class BaseHandler {
             Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         finally {
+            try {
             con.close();
             rs.close();
             st.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
         }
         return resultsearch;
     }
+
+    
+
+    
 }
