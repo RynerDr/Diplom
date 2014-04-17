@@ -6,6 +6,12 @@
 
 package servlsrc;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +34,7 @@ public class BaseHandler implements VideoProvider{
     
 
     @Override
-    public String Load(String reqtypefile, int reqid) {
+    public void Load(OutputStream out,String reqtypefile, int reqid) {
         String resultsearch = null;
          
         //загрузка контеста в котором описывается база данных
@@ -86,9 +92,35 @@ public class BaseHandler implements VideoProvider{
             } catch (SQLException ex) {
                 Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
         }
-        return resultsearch;
+   //     return resultsearch;
+           File newDirs = null;
+           int cur = 0;
+           newDirs = new File(resultsearch);
+           FileInputStream qwe;
+           BufferedInputStream bis = null; 
+           
+        try {
+            qwe = new FileInputStream(newDirs);
+            bis = new BufferedInputStream(new FileInputStream(newDirs));
+            } catch (FileNotFoundException ex) {
+            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+          
+        try {
+            while((cur=bis.read())!=-1 )out.write(cur);
+        } catch (IOException ex) {
+            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally{
+            
+            try {
+                out.close();
+                bis.close();
+                 } catch (IOException ex) {
+                Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     

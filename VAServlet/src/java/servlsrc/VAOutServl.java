@@ -49,23 +49,24 @@ public class VAOutServl extends HttpServlet {
                            throws ServletException, IOException  
       { 
           BaseHandler urlfile = new BaseHandler();
-          File newDirs = null;
-          int cur = 0;
+         /* File newDirs = null;
+          int cur = 0;*/
           req.setCharacterEncoding("Cp1251");
             //получение параметров запроса
           String id = req.getParameter("id");
           String typefile = req.getParameter("typefile");
 
        
-           newDirs = new File(urlfile.Load(typefile, Integer.parseInt(id)));
+         /*  newDirs = new File(urlfile.Load(typefile, Integer.parseInt(id)));
        
         
           FileInputStream qwe = new FileInputStream(newDirs);
-          BufferedInputStream bis = new BufferedInputStream(new FileInputStream(newDirs));
-          OutputStream os = resp.getOutputStream();
+          BufferedInputStream bis = new BufferedInputStream(new FileInputStream(newDirs));*/
+         /* OutputStream os = resp.getOutputStream();
           while((cur=bis.read())!=-1 )os.write(cur);
           os.close();
-          bis.close();
+          bis.close();*/
+          urlfile.Load(resp.getOutputStream(), typefile,Integer.parseInt(id));
       }
 
 }

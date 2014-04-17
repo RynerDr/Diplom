@@ -6,6 +6,8 @@
 
 package servlsrc;
 
+import java.io.OutputStream;
+
 /**
  *
  * @author Ryner
@@ -14,5 +16,5 @@ public interface VideoProvider {
    /*public String Load(String reqtypefile, int reqid){
        return null;
    }*/
-    String Load(String reqtypefile, int reqid);
+    void Load(OutputStream out,String reqtypefile, int reqid);
 }
