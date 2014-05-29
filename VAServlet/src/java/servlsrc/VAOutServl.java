@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class VAOutServl extends HttpServlet {
     protected String paramInitClass = null;
+
    @Override
       public void init (ServletConfig config) throws ServletException  
       {
@@ -51,7 +52,7 @@ public class VAOutServl extends HttpServlet {
 
           VideoProvider provider = null;
        try {
-           provider = (VideoProvider) Class.forName(this.paramInitClass).newInstance();
+           provider = (VideoProvider) Class.forName(this.paramInitClass).newInstance(); 
        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
            Logger.getLogger(VAOutServl.class.getName()).log(Level.SEVERE, null, ex);
        }
@@ -59,7 +60,8 @@ public class VAOutServl extends HttpServlet {
           
             //получение параметров запроса
           String id = req.getParameter("id");
-          String typefile = req.getParameter("typefile");
+          
+          String typefile = req.getParameter("typefile");        
           provider.load(resp.getOutputStream(), typefile,Integer.parseInt(id));
       }
 

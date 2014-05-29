@@ -6,12 +6,7 @@
 
 package servlsrc;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -78,7 +73,7 @@ public class BaseHandler implements VideoProvider{
         }
 
            File newDirs ;
-           int cur;
+
            newDirs = new File(resultsearch);
            FileInputStream qwe;
            BufferedInputStream bis = null; 
@@ -87,8 +82,9 @@ public class BaseHandler implements VideoProvider{
             qwe = new FileInputStream(newDirs);
             bis = new BufferedInputStream(new FileInputStream(newDirs));
             
-            while((cur=bis.read())!=-1 )out.write(cur);
 
+            byte[] buffer = new byte[262144];//1048576 много 524288 тормозит 32768 близко 65536 лучше 98304 ещё лучше
+         while ((bis.read(buffer)) != -1)out.write(buffer);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
