@@ -19,32 +19,36 @@ public class LoaderStream implements VideoProvider{
 
 
     @Override
-    public void load(OutputStream out, String urlStream, int reqid) {
+    public void load(OutputStream out, String urlStream) {
+        
+       final int size = 262144;//1048576 много 524288 тормозит 32768 близко 65536 лучше 98304 ещё лучше 
+       BufferedInputStream rd = null;
+       try {
 
-       
-      URL url;
-      HttpURLConnection conn;
-      BufferedInputStream rd = null;
-      try {
-         url = new URL("http://"+urlStream);
-         conn = (HttpURLConnection) url.openConnection();
+         URL url = new URL(urlStream); 
+         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
          conn.setRequestMethod("GET");
-      
-         rd =new BufferedInputStream (conn.getInputStream());
-         byte[] buffer = new byte[262144];//1048576 много 524288 тормозит 32768 близко 65536 лучше 98304 ещё лучше
-         while ((rd.read(buffer)) != -1)out.write(buffer); //{ 262144 хорошо
-             
+       
+          rd =new BufferedInputStream (conn.getInputStream());
+          byte[] buffer = new byte[size];
+
+         while ((rd.read(buffer)) != -1)out.write(buffer); 
+              
+         }
+       catch (IOException e) {
+       }  
+        finally {
+            try {
+                if (rd != null) {
+                    rd.close();
+                }
+                if (out != null) {
+                    out.close();
+                } 
+            } catch (IOException ex) {
+                Logger.getLogger(LoaderStream.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-      catch (IOException e) {
-      }  
-          finally{
-          try {
-              rd.close();
-              out.close();
-          } catch (IOException ex) {
-              Logger.getLogger(LoaderStream.class.getName()).log(Level.SEVERE, null, ex);
-          }
-      }   
 
     }   
 }

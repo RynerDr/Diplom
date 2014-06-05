@@ -22,82 +22,80 @@ import javax.sql.DataSource;
  * @author Ryner
  */
 public class BaseHandler implements VideoProvider{
-    private final String RESOURCE = "jdbc/VAServlet";
-    private final String LOOKUP = "java:/comp/env";
+    private static final String RESOURCE = "jdbc/VAServlet";
+    private static final String LOOKUP = "java:/comp/env";
     private DataSource ds;
+    private String type;
+    private int id;
     
-    
+    public void requestHandler (String reqmedia){
+        id=Integer.parseInt(reqmedia.substring(0, reqmedia.indexOf("_")));
+        type=reqmedia.substring(reqmedia.indexOf("_")+1);
+    }
 
     @Override
-    public void load(OutputStream out,String reqtypefile, int reqid) {
-        String resultsearch = null;
+    public void load(OutputStream out,String reqparam) {
+        
+        requestHandler(reqparam);
+        final int size = 262144;//1048576 много 524288 тормозит 32768 близко 65536 лучше 98304 ещё лучше
+        Connection  con = null;
         PreparedStatement st = null;
         ResultSet rs = null; 
-        
-        //загрузка контеста в котором описывается база данных
+
+        BufferedInputStream bis = null; 
+
          try {
-                Context con = (Context) new InitialContext().lookup(LOOKUP);
-                ds = (DataSource) con.lookup(RESOURCE);
-             } catch (NamingException ex) {
-                System.err.println(ex);
+            //загрузка контеста в котором описывается база данных
+            Context context = (Context) new InitialContext().lookup(LOOKUP);
+            ds = (DataSource) context.lookup(RESOURCE);
+             con = ds.getConnection();
+             st = con.prepareStatement("SELECT id, urlfile FROM "+ type + " where id=?");
+             st.setInt(1,id);
+ 
+
+            //SQL запрос к базе данных, чтобы получить весь список интересующей таблицы   
+             rs = st.executeQuery();
+         
+            String resultsearch = null;
+            while (rs.next()) {
+                 // записываем ответ на запрос
+
+                resultsearch = rs.getString("urlfile");
              }
-         //установка соединения
 
-            Connection  con = null;
-        try {
-            con = ds.getConnection();
-            st = con.prepareStatement("SELECT id, urlfile FROM "+ reqtypefile + " where id=?");
-            st.setInt(1, reqid);
+            File newDirs  = new File(resultsearch);
+             bis = new BufferedInputStream(new FileInputStream(newDirs));
 
-        //SQL запрос к базе данных, чтобы получить весь список интересующей таблицы   
-            rs = st.executeQuery();
-        
-            while (rs.next()) 
-            {
-                // записываем ответ на запрос
-                    resultsearch=rs.getString("urlfile");
-                    //закрытие
-                    
-            }
-            } catch (SQLException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally {
-            try {
-                con.close();
-                rs.close();
-                st.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-           File newDirs ;
-
-           newDirs = new File(resultsearch);
-           FileInputStream qwe;
-           BufferedInputStream bis = null; 
-           
-        try {
-            qwe = new FileInputStream(newDirs);
-            bis = new BufferedInputStream(new FileInputStream(newDirs));
             
+             byte[] buffer = new byte[size];
 
-            byte[] buffer = new byte[262144];//1048576 много 524288 тормозит 32768 близко 65536 лучше 98304 ещё лучше
-         while ((bis.read(buffer)) != -1)out.write(buffer);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-            Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally{
-            try {
-                out.close();
-                bis.close();
-                 } catch (IOException ex) {
-                Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            while ((bis.read(buffer)) != -1) {
+                out.write(buffer);
             }
-        }
+        } catch (NamingException | SQLException | IOException ex) {
+             Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+
+        } finally {
+             try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+                if (bis != null) {
+                    bis.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (SQLException | IOException ex) {
+                 Logger.getLogger(BaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+             }
+         }
     }
 
     
